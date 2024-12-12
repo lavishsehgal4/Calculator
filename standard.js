@@ -4,12 +4,13 @@ const operator_btn = document.querySelectorAll(".operator");
 const equal_btn = document.querySelector(".equal");
 const semi_cal = document.querySelector(".showFullCal");
 const clear_cross = document.querySelectorAll(".cross");
+const operator2_btn = document.querySelectorAll(".operator_2");
 let index = 0;
 let first = 0;
 let is_equal_click = false;
 let second;
 let total;
-let cal_arr = [0, 0, "0", 0];
+let cal_arr = [0, 0, "0", 0, 0];
 
 function operate(a) {
   if (a[1] === "+") {
@@ -23,6 +24,25 @@ function operate(a) {
   }
 }
 
+function operate2(a) {
+  if (a[4] == "x²") {
+    return a[2] * a[2];
+  } else if (a[4] == "√x") {
+    return Math.sqrt(a[2]);
+  } else if (a[4] == "1/x") {
+    return 1 / a[2];
+  }
+}
+//special operator symbols
+function operate2_symbol(a) {
+  if (a[4] == "x²") {
+    return "sqr";
+  } else if (a[4] == "√x") {
+    return "sqrt";
+  } else if (a[4] == "1/x") {
+    return "1/";
+  }
+}
 //working of number buttons
 
 for (let i = 0; i < num_btn.length; i++) {
@@ -62,14 +82,61 @@ for (let i = 0; i < operator_btn.length; i++) {
     }
   });
 }
-
+let str2 = "";
+for (let i = 0; i < operator2_btn.length; i++) {
+  operator2_btn[i].addEventListener("click", function () {
+    document.querySelector(".display").value = "";
+    is_equal_click = false;
+    cal_arr[4] = operator2_btn[i].textContent;
+    if (index === 0) {
+      semi_cal.textContent =
+        operate2_symbol(cal_arr) + "(" + String(cal_arr[0]) + ")";
+      first = 0;
+      cal_arr[2] = cal_arr[0];
+      cal_arr[0] = operate2(cal_arr);
+      cal_arr[2] = "0";
+      document.querySelector(".display").value = cal_arr[0];
+    } else if (cal_arr[2] === "0" && cal_arr[1] === 0 && index == 1) {
+      semi_cal.textContent =
+        operate2_symbol(cal_arr) + "(" + String(cal_arr[0]) + ")";
+      first = 0;
+      cal_arr[2] = cal_arr[0];
+      cal_arr[0] = operate2(cal_arr);
+      cal_arr[2] = "0";
+      cal_arr[1] = 0;
+      document.querySelector(".display").value = cal_arr[0];
+    } else {
+      first = 0;
+      str2 = semi_cal.textContent =
+        String(cal_arr[0]) +
+        cal_arr[1] +
+        operate2_symbol(cal_arr) +
+        "(" +
+        String(cal_arr[2]) +
+        ")";
+      cal_arr[2] = operate2(cal_arr);
+      cal_arr[0] = operate(cal_arr);
+      cal_arr[2] = "0";
+      cal_arr[1] = 0;
+      cal_arr[4] = 0;
+      document.querySelector(".display").value = "";
+    }
+  });
+}
 //equate
+
 equal_btn.addEventListener("click", function () {
   is_equal_click = true;
   if (cal_arr[3] === 1) {
     document.querySelector(".display").value = "Invalid Input";
   } else {
-    if (index === 0 || cal_arr[2] === "0") {
+    if (cal_arr[1] === 0 && index === 1 && cal_arr[4] === 0) {
+      semi_cal.textContent = str2 + "=";
+
+      document.querySelector(".display").value = cal_arr[0];
+      cal_arr[2] = "0";
+      first = 0;
+    } else if (index === 0 || cal_arr[2] === "0") {
       document.querySelector(".display").value = cal_arr[0];
     } else {
       semi_cal.textContent = String(cal_arr[0]) + cal_arr[1] + cal_arr[2] + "=";
