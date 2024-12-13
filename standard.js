@@ -8,29 +8,43 @@ const operator2_btn = document.querySelectorAll(".operator_2");
 let index = 0;
 let first = 0;
 let is_equal_click = false;
-let second;
-let total;
+let is_decimal = false;
 let cal_arr = [0, 0, "0", 0, 0];
 
 function operate(a) {
+  let result;
   if (a[1] === "+") {
-    return Number(a[0] + a[2]);
+    result = Number(a[0] + a[2]);
+    return Math.round(result * 1000) / 1000;
   } else if (a[1] === "-") {
-    return a[0] - a[2];
+    result = a[0] - a[2];
+    return Math.round(result * 1000) / 1000;
   } else if (a[1] === "×") {
-    return a[0] * a[2];
+    result = a[0] * a[2];
+    return Math.round(result * 1000) / 1000;
   } else if (a[1] === "÷") {
-    return a[0] / a[2];
+    result = a[0] / a[2];
+    return Math.round(result * 1000) / 1000;
   }
 }
 
 function operate2(a) {
+  let result;
   if (a[4] == "x²") {
-    return a[2] * a[2];
+    result = a[2] * a[2];
+    return Math.round(result * 1000) / 1000;
   } else if (a[4] == "√x") {
-    return Math.sqrt(a[2]);
+    result = Math.sqrt(a[2]);
+    return Math.round(result * 1000) / 1000;
   } else if (a[4] == "1/x") {
-    return 1 / a[2];
+    result = 1 / a[2];
+    return Math.round(result * 1000) / 1000;
+  } else if (a[4] == "+/-") {
+    result = -a[2];
+    return Math.round(result * 1000) / 1000;
+  } else {
+    result = a[2] / 100;
+    return Math.round(result * 1000) / 1000;
   }
 }
 //special operator symbols
@@ -41,6 +55,10 @@ function operate2_symbol(a) {
     return "sqrt";
   } else if (a[4] == "1/x") {
     return "1/";
+  } else if (a[4] == "+/-") {
+    return " -";
+  } else {
+    return "%";
   }
 }
 //working of number buttons
@@ -49,12 +67,21 @@ for (let i = 0; i < num_btn.length; i++) {
   num_btn[i].addEventListener("click", function () {
     cal_arr[3] = 0;
     is_equal_click = false;
-    first = first * 10 + Number(num_btn[i].textContent);
+    const btnValue = num_btn[i].textContent;
+    if (btnValue === "." && !is_decimal) {
+      first = first + ".";
+      is_decimal = true;
+    } else if (btnValue !== "." && is_decimal) {
+      first = first + btnValue;
+    }
+    if (!is_decimal) {
+      first = first * 10 + Number(num_btn[i].textContent);
+    }
     document.querySelector(".display").value = first;
     if (index === 0) {
-      cal_arr[0] = first;
+      cal_arr[0] = Number(first);
     } else {
-      cal_arr[2] = first;
+      cal_arr[2] = Number(first);
     }
   });
 }
@@ -63,6 +90,7 @@ for (let i = 0; i < num_btn.length; i++) {
 for (let i = 0; i < operator_btn.length; i++) {
   operator_btn[i].addEventListener("click", function () {
     document.querySelector(".display").value = "";
+    is_decimal = false;
     is_equal_click = false;
     if (index === 0) {
       cal_arr[1] = operator_btn[i].textContent;
@@ -86,6 +114,8 @@ let str2 = "";
 for (let i = 0; i < operator2_btn.length; i++) {
   operator2_btn[i].addEventListener("click", function () {
     document.querySelector(".display").value = "";
+    is_decimal = false;
+    cal_arr[3] = 0;
     is_equal_click = false;
     cal_arr[4] = operator2_btn[i].textContent;
     if (index === 0) {
@@ -127,6 +157,7 @@ for (let i = 0; i < operator2_btn.length; i++) {
 
 equal_btn.addEventListener("click", function () {
   is_equal_click = true;
+  is_decimal = false;
   if (cal_arr[3] === 1) {
     document.querySelector(".display").value = "Invalid Input";
   } else {
@@ -137,7 +168,9 @@ equal_btn.addEventListener("click", function () {
       cal_arr[2] = "0";
       first = 0;
     } else if (index === 0 || cal_arr[2] === "0") {
+      semi_cal.textContent = first + "=";
       document.querySelector(".display").value = cal_arr[0];
+      first = 0;
     } else {
       semi_cal.textContent = String(cal_arr[0]) + cal_arr[1] + cal_arr[2] + "=";
       cal_arr[0] = operate(cal_arr);
@@ -155,17 +188,32 @@ for (let i = 0; i < clear_cross.length; i++) {
   clear_cross[i].addEventListener("click", function () {
     if (clear_cross[i].textContent == "⌫") {
       if (first != 0) {
-        first = Math.floor(first / 10);
-        if (index === 0) {
-          cal_arr[0] = first;
+        if (typeof first === "number") {
+          first = Math.floor(first / 10);
+          if (index === 0) {
+            cal_arr[0] = first;
+          } else {
+            cal_arr[2] = first;
+          }
         } else {
-          cal_arr[2] = first;
+          let lastChar = first[first.length - 1];
+          first = first.slice(0, -1);
+          if (lastChar === ".") {
+            first = Number(first);
+            is_decimal = false;
+          }
+          if (index === 0) {
+            cal_arr[0] = Number(first);
+          } else {
+            cal_arr[2] = Number(first);
+          }
         }
         document.querySelector(".display").value = first;
       }
     } else if (clear_cross[i].textContent == "CE") {
       if (!is_equal_click) {
         first = 0;
+        is_decimal = false;
         if (index === 0) {
           cal_arr[0] = first;
         } else {
@@ -177,7 +225,8 @@ for (let i = 0; i < clear_cross.length; i++) {
         index = 0;
         first = 0;
         is_equal_click = false;
-        cal_arr = [0, 0, "0", 0];
+        is_decimal = false;
+        cal_arr = [0, 0, "0", 0, 0];
         document.querySelector(".display").value = "";
         semi_cal.textContent = "";
       }
@@ -186,7 +235,8 @@ for (let i = 0; i < clear_cross.length; i++) {
       index = 0;
       first = 0;
       is_equal_click = false;
-      cal_arr = [0, 0, "0", 0];
+      is_decimal = false;
+      cal_arr = [0, 0, "0", 0, 0];
       document.querySelector(".display").value = "";
       semi_cal.textContent = "";
     }
