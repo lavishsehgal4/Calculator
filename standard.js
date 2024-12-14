@@ -187,7 +187,7 @@ equal_btn.addEventListener("click", function () {
 for (let i = 0; i < clear_cross.length; i++) {
   clear_cross[i].addEventListener("click", function () {
     if (clear_cross[i].textContent == "⌫") {
-      if (first != 0) {
+      if (first !== 0) {
         if (typeof first === "number") {
           first = Math.floor(first / 10);
           if (index === 0) {
