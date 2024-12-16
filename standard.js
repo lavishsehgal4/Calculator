@@ -67,6 +67,7 @@ for (let i = 0; i < num_btn.length; i++) {
   num_btn[i].addEventListener("click", function () {
     cal_arr[3] = 0;
     is_equal_click = false;
+    document.querySelector(".display").classList.remove("colo");
     const btnValue = num_btn[i].textContent;
     if (btnValue === "." && !is_decimal) {
       first = first + ".";
@@ -92,6 +93,7 @@ for (let i = 0; i < operator_btn.length; i++) {
     document.querySelector(".display").value = "";
     is_decimal = false;
     is_equal_click = false;
+    document.querySelector(".display").classList.remove("colo");
     if (index === 0) {
       cal_arr[1] = operator_btn[i].textContent;
       index = 1;
@@ -114,6 +116,7 @@ let str2 = "";
 for (let i = 0; i < operator2_btn.length; i++) {
   operator2_btn[i].addEventListener("click", function () {
     document.querySelector(".display").value = "";
+    document.querySelector(".display").classList.remove("colo");
     is_decimal = false;
     cal_arr[3] = 0;
     is_equal_click = false;
@@ -158,7 +161,9 @@ for (let i = 0; i < operator2_btn.length; i++) {
 equal_btn.addEventListener("click", function () {
   is_equal_click = true;
   is_decimal = false;
+  document.querySelector(".display").classList.remove("colo");
   if (cal_arr[3] === 1) {
+    document.querySelector(".display").classList.add("colo");
     document.querySelector(".display").value = "Invalid Input";
   } else {
     if (cal_arr[1] === 0 && index === 1 && cal_arr[4] === 0) {
@@ -211,6 +216,7 @@ for (let i = 0; i < clear_cross.length; i++) {
         document.querySelector(".display").value = first;
       }
     } else if (clear_cross[i].textContent == "CE") {
+      document.querySelector(".display").classList.remove("colo");
       if (!is_equal_click) {
         first = 0;
         is_decimal = false;
@@ -232,6 +238,7 @@ for (let i = 0; i < clear_cross.length; i++) {
       }
     } else {
       //reset the calculator
+      document.querySelector(".display").classList.remove("colo");
       index = 0;
       first = 0;
       is_equal_click = false;
