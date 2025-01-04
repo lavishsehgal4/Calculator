@@ -11,5 +11,5 @@ A functional calculator built using JavaScript, HTML, and CSS. This project prov
 
 ## Demo
 
-![Calculator Preview](![Screenshot 2025-01-04 141722](https://github.com/user-attachments/assets/c4822c3a-7ffd-4366-93d6-0bc4656b940d)
+(![Screenshot 2025-01-04 141722](https://github.com/user-attachments/assets/c4822c3a-7ffd-4366-93d6-0bc4656b940d)
 )  
